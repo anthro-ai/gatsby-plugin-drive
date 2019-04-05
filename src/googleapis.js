@@ -27,6 +27,7 @@ const getFolder = (folderId, token) => {
           bearer: token,
         },
         qs: {
+          fields: 'kind,files(kind,id,name,mimeType,modifiedTime,createdTime)',
           q: `'${folderId}' in parents`,
         },
       },

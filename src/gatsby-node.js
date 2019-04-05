@@ -23,9 +23,9 @@ exports.onPreBootstrap = (
     const cmsFiles = await googleapi.getFolder(folderId, token);
     shouldExportGDocs = exportGDocs;
     exportMime = exportMimeType;
-    middleware = exportMiddleware === undefined 
-      ? x => x 
-      : exportMiddleware; 
+    middleware = exportMiddleware === undefined
+      ? x => x
+      : exportMiddleware;
 
     // Create content directory if it doesn't exist.
     mkdirp(destination);
@@ -76,6 +76,11 @@ function recursiveFolders(array, parent = '', token, destination) {
             // Finally, write buffer to file.
             fs.writeFile(dest, buffer, err => {
               if (err) return log(err);
+
+              // modify access times and modified times
+              if (file.createdTime) {
+                fs.utimesSync(dest, new Date(file.createdTime), new Date(file.modifiedTime))
+              }
 
               log(`Saved file ${getFilenameByMime(file)}`);
               resolve(getFilenameByMime(file));
